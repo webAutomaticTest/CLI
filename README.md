@@ -1,0 +1,2 @@
+# genCandidateAction
+input base scenario, 
