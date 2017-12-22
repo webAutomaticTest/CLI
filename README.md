@@ -1,8 +1,12 @@
-# genCandidateAction
-input base scenario
+# CLI
+1.input baseScenario.json
 
-generate scenarios by cuting left actions after each action status 
+save the baseScenario to mongodb.
+
+2.generate scenarios by cuting left actions after each action status 
 
 run all the scenarios 
 
-crawler and save the candidate actions
+crawl and save the candidate actions
+
+3.combine the baseScenario and candidate actions to generate new scenarios(new test scripts)
