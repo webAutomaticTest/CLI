@@ -1,0 +1,68 @@
+const request_promise = require('request-promise');
+const requestUrl = 'http://localhost';
+
+function saveBaseScenario(baseScenarioJson){
+	return request_promise({
+		method: 'POST',
+		uri: requestUrl + ':8086/base/',
+		body: baseScenarioJson,
+		json: true
+	})
+    .then(function (parsedBody) {// POST succeeded, return baseScenario._id    	
+    	if (parsedBody.value){
+    		return Promise.resolve(parsedBody.value._id);
+    	} else {
+    		return Promise.resolve(parsedBody.lastErrorObject.upserted);
+    	}    	
+    })
+    .catch(function (err) {// POST failed...
+    	console.log(err);
+    	return Promise.reject(err);
+    });
+}
+
+async function saveBaseActions(baseScenarioActions){//input baseScenarionActions and save all the actions to mongodb table action
+    for (var i = 0; i <= baseScenarioActions.length - 1; i++) {
+        await request_promise({
+            method: 'POST',
+            uri: requestUrl + ':8086/action/',
+            body: baseScenarioActions[i],
+            json: true
+        })
+        .then(function (parsedBody) {// POST succeeded...
+            // return Promise.resolve(parsedBody);
+        })
+        .catch(function (err) {// POST failed...
+            console.log(err);
+            // return Promise.reject(err);
+        });
+    }
+}
+
+async function crawlCandidate(baseScenario){
+    var baseScenarioActions = baseScenario.actions;
+    var bid = baseScenario._id;
+
+    for (var i = 0; i <= baseScenarioActions.length - 1; i++) {
+        var newActions = await baseScenarioActions.slice(0, i + 1);
+        var sce = {"actions" : newActions, "bid" : bid};
+        await request_promise({
+            method: 'POST',
+            uri: requestUrl + ':8091/crawlNow/',
+            body: sce,
+            json: true
+        })
+        .then(function (parsedBody) {
+            // console.log(parsedBody);
+        })
+        .catch(function (err) {
+            console.log(err);
+        });
+        
+    }
+}
+
+
+module.exports.saveBaseScenario = saveBaseScenario;
+module.exports.saveBaseActions = saveBaseActions;
+module.exports.crawlCandidate = crawlCandidate;
