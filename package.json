@@ -21,9 +21,13 @@
   "homepage": "https://github.com/webAutomaticTest/genCandidateAction#readme",
   "dependencies": {
     "amqplib": "^0.5.2",
+    "array-shuffle": "^1.0.1",
+    "js-combinatorics": "^0.5.3",
+    "number-array-generator": "^1.0.1",
     "promise": "^8.0.1",
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
+    "sleep": "^5.1.1",
     "wat_action_nightmare": "^1.0.14",
     "winston": "^2.4.0",
     "yargs": "^10.0.3"

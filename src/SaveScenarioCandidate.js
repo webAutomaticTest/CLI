@@ -8,12 +8,8 @@ function saveBaseScenario(baseScenarioJson){
 		body: baseScenarioJson,
 		json: true
 	})
-    .then(function (parsedBody) {// POST succeeded, return baseScenario._id    	
-    	if (parsedBody.value){
-    		return Promise.resolve(parsedBody.value._id);
-    	} else {
-    		return Promise.resolve(parsedBody.lastErrorObject.upserted);
-    	}    	
+    .then(function (parsedBody) {// POST succeeded    	
+    	return Promise.resolve(parsedBody);   	
     })
     .catch(function (err) {// POST failed...
     	console.log(err);
