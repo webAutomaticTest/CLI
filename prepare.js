@@ -1,11 +1,6 @@
-const wat_action = require('wat_action_nightmare');
 const request = require('request');
 const winston = require('winston');
 var sleep = require('sleep');
-
-const scenario_str = require('./baseScenario/baseScenario.json');
-const base_scenario = new wat_action.Scenario(scenario_str);
-const baseScenarioJson = JSON.parse(base_scenario.toJSON());
 
 const ScenarioCandidate = require('./src/SaveScenarioCandidate.js');
 const LenLocation = require('./src/LenLocation.js').LenLocation;
@@ -18,8 +13,6 @@ const safeSart = 1;
 const loopMax = 3;
 
 var promise = new Promise(async (resolve, reject) => {
-
-	await ScenarioCandidate.saveBaseScenario(baseScenarioJson);
 
 	request.get(requestUrl + ':8086/base/', (error, response, body) => {
 		if (!error) {
@@ -40,8 +33,8 @@ promise.then( async (baseScenario) => {
 })
 .then( async () => {
 	
-	await winston.info(`wait: crawler is crawling candidate actions`);
-	await sleep.sleep(40);
+	await winston.info(`thank you for waiting crawler crawling candidate actions`);
+	// await sleep.sleep(40);
 	
 	var step = new Step();
 	await step.initialStep();	

@@ -49,7 +49,7 @@ async function crawlCandidate(baseScenario){
             json: true
         })
         .then(function (parsedBody) {
-            // console.log(parsedBody);
+            console.log(parsedBody);
         })
         .catch(function (err) {
             console.log(err);
