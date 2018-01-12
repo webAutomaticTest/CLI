@@ -1,4 +1,5 @@
-//inuput base Scenario output the increase length and location.
+//inuput base Scenario and safestart
+//output the increase locations.
 const numberArrayGenerator = require('number-array-generator');
 const Combinatorics = require('js-combinatorics');
 const winston = require('winston');

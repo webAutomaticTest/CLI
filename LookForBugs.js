@@ -26,12 +26,11 @@ var promise = new Promise(async (resolve, reject) => {
 
 });
 
-promise.then( async (baseScenario) => {
+promise.then( (baseScenario) => {
+	mainLookForBugs(baseScenario);
+});
 
-	var base_scenario = baseScenario;
-
-	// var step = new Step();
-	// await step.updateStep();	
+async function mainLookForBugs(baseScenario){
 
 	for (var i = 0; i < loopMax; i++) {
 
@@ -44,14 +43,14 @@ promise.then( async (baseScenario) => {
 		var insertStep = await noise.getAndChooseStep();
 
 		//generate new scenarios
-		var scenario = new Scenario(base_scenario, location, insertStep);
-		var sidTF = await scenario.genTF();
-		await sendScenarioRequests.sendScenarioRequests(sidTF);
+		var scenario = new Scenario(baseScenario, location, insertStep);
+		var sidTFlist = await scenario.genTF();
+		await sendScenarioRequests.sendScenarioRequests(sidTFlist);
 		
 		var sidIO = await scenario.genIO();
 		await sendScenarioRequests.sendScenarioRequests(sidIO);
 
 	}
 
+}
 
-});
