@@ -58,7 +58,43 @@ async function crawlCandidate(baseScenario){
     }
 }
 
+async function genCrawlScenarios(baseScenario){
+    var baseScenarioActions = baseScenario.actions;
+    var bid = baseScenario._id;
+    var crawlScenarios = []
+
+    for (var i = 0; i <= baseScenarioActions.length - 1; i++) {
+        var newActions = await baseScenarioActions.slice(0, i + 1);
+        var sce = {"actions" : newActions, "bid" : bid};
+        await crawlScenarios.push(sce);        
+        
+    }
+
+    return crawlScenarios;
+}
+
+async function postToCrawl(crawlScenarios){
+
+    for (var i = 0; i < crawlScenarios.length; i++) {
+
+        await request_promise({
+            method: 'POST',
+            uri: requestUrl + ':8091/crawlNow/',
+            body: crawlScenarios[i],
+            json: true
+        })
+        .then(function (parsedBody) {
+            console.log(parsedBody);
+        })
+        .catch(function (err) {
+            console.log(err);
+        });
+    }
+}
+
 
 module.exports.saveBaseScenario = saveBaseScenario;
 module.exports.saveBaseActions = saveBaseActions;
 module.exports.crawlCandidate = crawlCandidate;
+module.exports.genCrawlScenarios = genCrawlScenarios;
+module.exports.postToCrawl = postToCrawl;

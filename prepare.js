@@ -29,12 +29,13 @@ var promise = new Promise(async (resolve, reject) => {
 promise.then( async (baseScenario) => {
 	var baseScenarioActions = baseScenario.actions;
 	await ScenarioCandidate.saveBaseActions(baseScenarioActions);
-	await ScenarioCandidate.crawlCandidate(baseScenario);
+	var crawlScenarios = await ScenarioCandidate.genCrawlScenarios(baseScenario);
+	await ScenarioCandidate.postToCrawl(crawlScenarios);
+	// await ScenarioCandidate.crawlCandidate(baseScenario);
 })
 .then( async () => {
 	
 	await winston.info(`thank you for waiting crawler crawling candidate actions`);
-	// await sleep.sleep(40);
 	
 	var step = new Step();
 	await step.initialStep();	
