@@ -6,19 +6,19 @@ const ProCalculater = require('./ProCalculater.js').ProCalculater;
 
 const requestUrl = 'http://localhost';
 
-class Step{
+class Step{	
 
 	async initialStep(){
-		request.get(requestUrl + ':8086/action/', async (error, response, body) => {
+		request.get(requestUrl + ':8086/candidate/', async (error, response, body) => {
 			if (!error) {
-				var actionArray = JSON.parse(body);
-				for (var i = 0; i < actionArray.length; i++) {
-					actionArray[i].probability = await 1 / actionArray.length;
-					// actionArray[i].probability = await (1 / actionArray.length) * 100;
+				var candidates = JSON.parse(body);
+				console.log(candidates.length);
+				for (var i = 0; i < candidates.length; i++) {
+					candidates[i].probability = await 1 / candidates.length;
 					await request_promise({
 						method: 'POST',
 						uri: requestUrl + ':8086/init_step/',
-						body: actionArray[i],
+						body: candidates[i],
 						json: true
 					})
 					.then(function (parsedBody) {						
@@ -28,7 +28,6 @@ class Step{
 						winston.info(`InitialStep to post action is error : ${err}`);
 					});					
 				}
-
 			} else {
 				winston.info(`InitialStep to request all the actions is error : ${error}`);
 			}

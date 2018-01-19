@@ -9,7 +9,7 @@ const Noise = require('./src/Noise.js').Noise;
 const Scenario = require('./src/Scenario.js').Scenario;
 
 const requestUrl = 'http://localhost';
-const safeSart = 1;
+// const safeSart = 1;
 const loopMax = 3;
 
 var promise = new Promise(async (resolve, reject) => {
