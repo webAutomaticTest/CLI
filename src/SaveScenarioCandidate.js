@@ -61,22 +61,19 @@ async function crawlCandidate(baseScenario){
 async function genCrawlScenarios(baseScenario){
     var baseScenarioActions = baseScenario.actions;
     var bid = baseScenario._id;
-    var crawlScenarios = []
-
+    var crawlScenarios = [];
     for (var i = 0; i <= baseScenarioActions.length - 1; i++) {
         var newActions = await baseScenarioActions.slice(0, i + 1);
         var sce = {"actions" : newActions, "bid" : bid};
         await crawlScenarios.push(sce);        
         
     }
-
     return crawlScenarios;
 }
 
 async function postToCrawl(crawlScenarios){
 
     for (var i = 0; i < crawlScenarios.length; i++) {
-
         await request_promise({
             method: 'POST',
             uri: requestUrl + ':8091/crawlNow/',
@@ -90,6 +87,7 @@ async function postToCrawl(crawlScenarios){
             console.log(err);
         });
     }
+    console.log("is it finish??");
 }
 
 
