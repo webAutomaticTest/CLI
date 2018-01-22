@@ -1,110 +1,67 @@
 const request_promise = require('request-promise');
 const winston = require('winston');
 const wat_action = require('wat_action_nightmare');
+const actionFactory = require('wat_action_nightmare').ActionFactory;
 const requestUrl = 'http://localhost';
 
 class Scenario{
-	constructor(base_scenario, location, insertStep){
+	constructor(base_scenario, location, stepNoises){
 		this.base_scenario = base_scenario;
 		this.location = location;
-		this.insertStep = insertStep;
+		this.stepNoises = stepNoises;
 	}
 
-	async genTF(){
+	async genAndSaveScenarios(){
+		var noiseScenario = await this.genScenarios();
+		var sid = await this.sendRequestToSaveScenario(noiseScenario);		
+		return sid;
+	}
 
-		var scenarioTF = [];
-		var sidTF = [];
-
-		for (var i = 0; i < this.location.length; i++) {
-
-			var scenario = new wat_action.Scenario(this.base_scenario.actions);
-			await scenario.actions.splice(this.location[i] + 1, 0, this.insertStep[i].action);
-			var cutAction = await scenario.actions.slice(0, this.location[i] + 2);
-			
-			var noiseScenario = {
-				"abid" : this.location[i],
-				"aid" : this.insertStep[i].aid,
-				"flag" : "TF",
-				"wait" : 1000,
-				"actions" : cutAction,
-				"cssselector" : 'watId',
-				"name" : 'MyScenario',
-				"assert" : {
-					end: true,
-					selector: 'body',
-					property: 'innerHTML',
-					contains: 'success'
-				}
-			}
-
-			await scenarioTF.push(noiseScenario);		
-
+	async genScenarios(){
+		var scenario = new wat_action.Scenario(this.base_scenario.actions);
+		var noiseInfo = [];
+		for (var i = 0; i < this.stepNoises.length; i++) {
+			var insert = actionFactory.createAction(this.stepNoises[i].action);			
+			await scenario.actions.splice(this.stepNoises[i].preIndex + 1 + i , 0, insert);
+			await noiseInfo.push({
+				'stepId' : this.stepNoises[i]._id,
+				'candidateId' : this.stepNoises[i].candidateId,
+				'preIndex' : this.stepNoises[i].preIndex
+			});				
 		}
 
-		await request_promise({
-				method: 'POST',
-				uri: requestUrl + ':8086/scenario/',
-				body: scenarioTF,
-				json: true
-			})
-			.then(function (parsedBody) {
-				sidTF = parsedBody.insertedIds;				
-			})
-			.catch(function (err) {
-				winston.info(`genTF to post scenario is error : ${err}`);
-			});
-
-		return Promise.resolve(sidTF);		
-		
-	}
-
-	async genIO(){
-
-		var scenarioList = [];
-		var sids = [];
-
-		for (var i = 0; i < this.location.length; i++) {
-
-			var scenario = new wat_action.Scenario(this.base_scenario.actions);
-			await scenario.actions.splice(this.location[i] + 1, 0, this.insertStep[i].action);
-			var cutAction = await scenario.actions.slice(0, this.location[i] + 3);
-			
-			var noiseScenario = {
-				"abid" : this.location[i],
-				"aid" : this.insertStep[i].aid,
-				"flag" : "IO",
-				"wait" : 1000,
-				"actions" : cutAction,
-				"cssselector" : 'watId',
-				"name" : 'MyScenario',
-				"assert" : {
-					end: true,
-					selector: 'body',
-					property: 'innerHTML',
-					contains: 'success'
-				}
+		var noiseScenario = {
+			"noiseInfo" : noiseInfo,
+			"flag" : "END",
+			"wait" : 1000,
+			"actions" : scenario.actions,
+			"cssselector" : 'watId',
+			"name" : 'MyScenario',
+			"assert" : {
+				end: true,
+				selector: 'body',
+				property: 'innerHTML',
+				contains: 'success'
 			}
-
-			await scenarioList.push(noiseScenario);		
-
 		}
-
-		await request_promise({
-				method: 'POST',
-				uri: requestUrl + ':8086/scenario/',
-				body: scenarioList,
-				json: true
-			})
-			.then(function (parsedBody) {
-				sids = parsedBody.insertedIds;				
-			})
-			.catch(function (err) {
-				winston.info(`genTF to post scenario is error : ${err}`);
-			});
-
-		return Promise.resolve(sids);		
-		
+		return noiseScenario;				
 	}
+
+	async sendRequestToSaveScenario(scenario){
+		return request_promise({
+			method: 'POST',
+			uri: requestUrl + ':8086/scenario/',
+			body: scenario,
+			json: true
+		})
+		.then(function (parsedBody) {
+			var sid = parsedBody.insertedIds;
+			return Promise.resolve(sid);
+		})
+		.catch(function (err) {
+			winston.info(`sendRequestToSaveScenario to post scenario is error : ${err}`);
+		});
+	}	
 
 }
 
