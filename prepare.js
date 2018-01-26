@@ -4,7 +4,7 @@ var sleep = require('sleep');
 
 const ScenarioCandidate = require('./src/SaveScenarioCandidate.js');
 const LenLocation = require('./src/LenLocation.js').LenLocation;
-const Step = require('./src/Step.js').Step;
+const InitialSteps = require('./src/InitialSteps.js').InitialSteps;
 const Noise = require('./src/Noise.js').Noise;
 const Scenario = require('./src/Scenario.js').Scenario;
 
@@ -37,7 +37,7 @@ promise.then( async (baseScenario) => {
 	
 	await winston.info(`thank you for waiting crawler crawling candidate actions`);
 	
-	var step = new Step();
-	await step.initialStep();	
+	var initialSteps = new InitialSteps();
+	await initialSteps.initialSteps();	
 
 });

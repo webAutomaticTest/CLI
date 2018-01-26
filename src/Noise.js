@@ -20,6 +20,7 @@ class Noise{
 	//input baseScenario and locations, 
 	//for each location, search all candidates and choose one according probability
 	async getOneStepEachLocation(){
+		await console.log('begin to find the step Noises');
 		for (var i = 0; i < this.locations.length; i++) {			
 			var reqParams = {preIndex: this.locations[i], bid: this.baseScenario._id};
 			var stepResult = await this.requestGetSteps(reqParams);

@@ -2,6 +2,7 @@ const request_promise = require('request-promise');
 const winston = require('winston');
 const wat_action = require('wat_action_nightmare');
 const actionFactory = require('wat_action_nightmare').ActionFactory;
+const ObjectID = require('mongodb').ObjectID;
 const requestUrl = 'http://localhost';
 
 class Scenario{
@@ -11,7 +12,7 @@ class Scenario{
 		this.stepNoises = stepNoises;
 	}
 
-	async genAndSaveScenarios(){
+	async genAndSaveScenario(){
 		var noiseScenario = await this.genScenarios();
 		var sid = await this.sendRequestToSaveScenario(noiseScenario);		
 		return sid;
@@ -24,15 +25,16 @@ class Scenario{
 			var insert = actionFactory.createAction(this.stepNoises[i].action);			
 			await scenario.actions.splice(this.stepNoises[i].preIndex + 1 + i , 0, insert);
 			await noiseInfo.push({
-				'stepId' : this.stepNoises[i]._id,
-				'candidateId' : this.stepNoises[i].candidateId,
+				'stepId' : new ObjectID(this.stepNoises[i]._id),
+				'action' : this.stepNoises[i].action,
 				'preIndex' : this.stepNoises[i].preIndex
 			});				
 		}
 
 		var noiseScenario = {
+			"bid" : new ObjectID(this.base_scenario._id),
+			"baseActions" : this.base_scenario.actions,
 			"noiseInfo" : noiseInfo,
-			"flag" : "END",
 			"wait" : 1000,
 			"actions" : scenario.actions,
 			"cssselector" : 'watId',

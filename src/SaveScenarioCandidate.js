@@ -87,7 +87,7 @@ async function postToCrawl(crawlScenarios){
             console.log(err);
         });
     }
-    console.log("is it finish??");
+    await console.log("SaveScenarioCandidate function postToCrawl is finish!");
 }
 
 
