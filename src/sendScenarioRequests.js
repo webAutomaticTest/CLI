@@ -11,8 +11,6 @@ async function requestPlayScenario(sid){
 		await request.get('http://localhost:8091/playNow/' + sid, async (error, response, body) => {
 			if (!error) {
 				await console.log("body: " + body);
-
-
 				if (body=='notUnableFindErr'){
 					console.log('some err we can not identify');
 					resolve(null);

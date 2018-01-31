@@ -39,14 +39,43 @@ class Noise{
 			};
 			await request.get(options, async (error, response, body) => {
 				if (!error) {
-					var tempList = await arrayShuffle(body).sort(this.compare);					
-					resolve(tempList[0]);
+					var tempList = await arrayShuffle(body).sort(this.compare);
+					var chooseOneStep = await this.randomChooseOne(tempList);
+					await console.log('in Noise.js, chooseOneStep is: ');
+					await console.log(chooseOneStep);
+
+					resolve(chooseOneStep);
 				} else {
 					reject(error);
 				}
 			});
 		});
 	}
+
+	async randomChooseOne(steps){
+		let sum = await this.sumPro(steps);
+		let randomPro = await Math.random() * sum;
+		await winston.info(`in Noise.js randomChooseOne(steps), random probability is : ${randomPro}`);
+		let sumCheck = 0;
+		
+		for (let i = 0; i < steps.length; i++) {
+			sumCheck = await sumCheck + steps[i].probability;
+			
+			if(sumCheck > randomPro){
+				return steps[i];
+			}
+		}
+	}
+
+	async sumPro(steps){
+		let sum = 0;
+		for (let i = 0; i < steps.length; i++) {
+			sum = await sum + steps[i].probability;			
+		}
+		await winston.info(`the sum of probability is ${sum}`);
+		return sum;
+	}
+
 
 	//input increaseLength of scenario === the number of noise action === num of locations
 	//get all the stepActions from mongo
@@ -66,6 +95,8 @@ class Noise{
 			});
 		});
 	}
+
+
 
 }
 
